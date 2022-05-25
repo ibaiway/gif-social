@@ -5,7 +5,7 @@ import { User, UserDocument } from '../user/user.schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { HashingService } from 'src/utils/hashing/hashing.service';
 
 @Injectable()
@@ -72,5 +72,17 @@ export class AuthService {
       console.log('some error user not created');
     }
     this.generateTokensAndAuthenticateUser(res, createdUser.id);
+  }
+
+  async refreshToken(req: Request, res: Response) {
+    console.log(req.cookies);
+    if (req.cookies.refresh_token) {
+      return res.status(401).json({ error: 'Missing cookie' });
+    }
+    const tokenEncrypted = req.cookies.refresh_token;
+    const userId = await this.tokenService.parseTokenAndGetUserId(
+      tokenEncrypted,
+    );
+    this.generateTokensAndAuthenticateUser(res, userId);
   }
 }
