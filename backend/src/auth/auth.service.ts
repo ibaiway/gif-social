@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import { TokenService, TokenType } from 'src/utils/token/token.service';
 import { User, UserDocument } from '../user/user.schema';
@@ -75,14 +75,17 @@ export class AuthService {
   }
 
   async refreshToken(req: Request, res: Response) {
-    console.log(req.cookies);
-    if (req.cookies.refresh_token) {
+    if (!req.cookies.refresh_token) {
       return res.status(401).json({ error: 'Missing cookie' });
     }
     const tokenEncrypted = req.cookies.refresh_token;
-    const userId = await this.tokenService.parseTokenAndGetUserId(
-      tokenEncrypted,
-    );
-    this.generateTokensAndAuthenticateUser(res, userId);
+    try {
+      const userId = await this.tokenService.parseTokenAndGetUserId(
+        tokenEncrypted,
+      );
+      this.generateTokensAndAuthenticateUser(res, userId);
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.UNAUTHORIZED);
+    }
   }
 }
