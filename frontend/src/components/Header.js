@@ -6,8 +6,11 @@ import Form from "react-bootstrap/Form";
 import FormControl from "react-bootstrap/FormControl";
 import Button from "react-bootstrap/Button";
 import { LinkContainer } from "react-router-bootstrap";
+import { useContext } from "react";
+import { UserContext } from "../providers/UserProvider";
 
 function Header(params) {
+  const user = useContext(UserContext);
   return (
     <Navbar bg="light" expand="lg">
       <Container fluid>
@@ -38,9 +41,18 @@ function Header(params) {
             <LinkContainer to="/register">
               <Nav.Link>Register</Nav.Link>
             </LinkContainer>
-            <LinkContainer to="/login">
-              <Nav.Link>Login</Nav.Link>
-            </LinkContainer>
+            {user.id ? (
+              <>
+                <LinkContainer to="/logout">
+                  <Nav.Link>Logout</Nav.Link>
+                </LinkContainer>
+                <p>{user.email}</p>
+              </>
+            ) : (
+              <LinkContainer to="/login">
+                <Nav.Link>Login</Nav.Link>
+              </LinkContainer>
+            )}
           </Nav>
         </Navbar.Collapse>
       </Container>

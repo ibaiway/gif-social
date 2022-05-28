@@ -2,8 +2,22 @@ import GifList from "../components/GifList";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import { useEffect, useState } from "react";
+import { getAll } from "../utils/fetchMedia";
 
 function Home(params) {
+  const [gifs, setGifs] = useState([]);
+  useEffect(() => {
+    console.log("HomePage Reloaded");
+    const fetchMedia = async () => {
+      const response = await getAll();
+      console.log(response);
+      setGifs(response);
+      console.log(gifs);
+    };
+    fetchMedia();
+  }, []);
+
   return (
     <main>
       <Container className="py-5 text-center">
@@ -15,7 +29,7 @@ function Home(params) {
         </Row>
       </Container>
       <div className="py-5 bg-light">
-        <GifList />
+        <GifList gifs={gifs} />
       </div>
     </main>
   );
