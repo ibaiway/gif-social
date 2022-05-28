@@ -33,9 +33,14 @@ export class AuthService {
     const user = await this.userService.findOne(userId);
     const { token: access_token, expiration: token_expiration } =
       this.tokenService.generateAccessToken(userId);
-    const { token: refreshToken } =
+    const { token: refreshToken, expiration: refreshExpiration } =
       this.tokenService.generateRefreshToken(userId);
-    res.cookie('refresh_token', refreshToken, { httpOnly: true });
+    res.cookie('refresh_token', refreshToken, {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: false,
+      expires: new Date(refreshExpiration),
+    });
     res.status(200).json({ access_token, token_expiration, user });
   }
 

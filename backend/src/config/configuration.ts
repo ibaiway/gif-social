@@ -1,5 +1,6 @@
 export default () => ({
   port: parseInt(process.env.PORT, 10) || 3000,
+  clientUrl: process.env.CLIENT_URL,
   db: {
     mongo: {
       user: process.env.DB_MONGO_USER,
@@ -8,19 +9,22 @@ export default () => ({
       name: process.env.DB_MONGO_NAME,
     },
   },
-  cloudinary: {
-    host: process.env.DATABASE_HOST,
-    port: parseInt(process.env.DATABASE_PORT, 10) || 5432,
+  storage: {
+    cloudinary: {
+      name: process.env.CLOUDINARY_NAME,
+      key: process.env.CLOUDINARY_KEY,
+      secret: process.env.CLOUDINARY_KEY,
+    },
   },
   authentication: {
     token: {
       secret: process.env.AUTH_TOKEN_SECRET,
-      expiresIn: 600,
+      expiresIn: parseInt(process.env.AUTH_TOKEN_EXPIRE, 10) || 600,
       audience: process.env.AUTH_TOKEN_AUDIENCE,
       issuer: process.env.AUTH_TOKEN_ISSUER,
     },
     refreshToken: {
-      expiresIn: 600,
+      expiresIn: parseInt(process.env.AUTH_REFRESHTOKEN_EXPIRE, 10) || 1200,
     },
   },
 });
